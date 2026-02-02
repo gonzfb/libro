@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Mi libro</title>
+  <script src="epub.min.js"></script>
+  <style>
+    body {
+      margin: 0;
+      font-family: sans-serif;
+    }
+    #viewer {
+      width: 100%;
+      height: 100vh;
+    }
+    #controls {
+      position: fixed;
+      bottom: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0,0,0,0.7);
+      padding: 8px 12px;
+      border-radius: 8px;
+    }
+    #controls button {
+      color: white;
+      background: none;
+      border: 1px solid white;
+      margin: 0 5px;
+      padding: 5px 10px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+<div id="viewer"></div>
+
+<div id="controls">
+  <button onclick="rendition.prev()">◀</button>
+  <button onclick="rendition.next()">▶</button>
+  <button onclick="bigger()">A+</button>
+  <button onclick="smaller()">A-</button>
+</div>
+
+<script>
+  const book = ePub("libro.epub");
+  const rendition = book.renderTo("viewer", {
+    width: "100%",
+    height: "100%"
+  });
+
+  let fontSize = 100;
+
+  rendition.display();
+
+  function bigger() {
+    fontSize += 10;
+    rendition.themes.fontSize(fontSize + "%");
+  }
+
+  function smaller() {
+    fontSize -= 10;
+    rendition.themes.fontSize(fontSize + "%");
+  }
+</script>
+
+</body>
+</html>
