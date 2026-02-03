@@ -55,7 +55,7 @@
   const book = ePub();
 
   // 🔑 CARGA ROBUSTA DEL EPUB
-  fetch("libro.epub")
+  fetch("/libro/libro.epub")
     .then(res => {
       if (!res.ok) throw new Error("No se pudo cargar el EPUB");
       return res.arrayBuffer();
