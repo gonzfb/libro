@@ -2,85 +2,47 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Mi libro</title>
+  <title>Test EPUB</title>
 
-  <!-- 🔑 JSZip (OBLIGATORIO para EPUB) -->
-  <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+  <!-- ✅ JSZip UMD (expone window.JSZip) -->
+  <script src="https://unpkg.com/jszip@3.10.1/dist/jszip.min.js"></script>
 
-  <!-- epub.js -->
-  <script src="https://unpkg.com/epubjs/dist/epub.min.js"></script>
+  <!-- ✅ epub.js -->
+  <script src="https://unpkg.com/epubjs@0.3.88/dist/epub.min.js"></script>
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <style>
-    body {
-      margin: 0;
-      font-family: system-ui, sans-serif;
-    }
-    #viewer {
-      width: 100%;
-      height: 100vh;
-    }
-    #controls {
-      position: fixed;
-      bottom: 12px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: rgba(0,0,0,.75);
-      padding: 8px 12px;
-      border-radius: 10px;
-      display: flex;
-      gap: 8px;
-      z-index: 1000;
-    }
-    #controls button {
-      color: white;
-      background: none;
-      border: 1px solid white;
-      padding: 6px 10px;
-      border-radius: 6px;
-      cursor: pointer;
-    }
+    body { margin: 0; font-family: system-ui, sans-serif; }
+    #viewer { width: 100%; height: 100vh; }
   </style>
 </head>
 <body>
 
 <div id="viewer"></div>
 
-<div id="controls">
-  <button id="prev">◀</button>
-  <button id="next">▶</button>
-</div>
-
 <script>
-  console.log("ePub =", typeof ePub);
-  console.log("JSZip =", typeof JSZip);
+  // 🔍 COMPROBACIONES CLAVE
+  console.log("JSZip =", window.JSZip);
+  console.log("ePub =", window.ePub);
 
-  const book = ePub();
+  if (!window.JSZip) {
+    throw new Error("JSZip NO está en window");
+  }
 
-  fetch("libro.epub")
-    .then(res => {
-      if (!res.ok) throw new Error("No se pudo cargar el EPUB");
-      return res.arrayBuffer();
-    })
-    .then(buffer => book.open(buffer))
-    .then(() => {
-      const rendition = book.renderTo("viewer", {
-        width: "100%",
-        height: "100%",
-        spread: "none"
-      });
+  const book = ePub("libro.epub");
 
-      rendition.display();
+  const rendition = book.renderTo("viewer", {
+    width: "100%",
+    height: "100%",
+    spread: "none"
+  });
 
-      document.getElementById("prev").onclick = () => rendition.prev();
-      document.getElementById("next").onclick = () => rendition.next();
+  rendition.display();
 
-      book.loaded.metadata.then(m => console.log("metadata:", m));
-      book.loaded.navigation.then(n => console.log("toc:", n));
-    })
-    .catch(err => console.error("Error EPUB:", err));
+  book.loaded.metadata.then(m => console.log("metadata:", m));
 </script>
 
 </body>
 </html>
+
