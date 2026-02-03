@@ -5,7 +5,7 @@
   <title>Mi libro</title>
 
   <!-- epub.js (archivo local descargado desde unpkg) -->
-  <script src="epub.min.js"></script>
+  <script src="/libro/epub.min.js"></script>
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -64,7 +64,7 @@
   <script>
     // === Cargar el libro ===
    const book = ePub({
-  url: "libro.epub",
+  url: "/libro/libro.epub",
   openAs: "epub"
 });
 
