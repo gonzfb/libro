@@ -52,7 +52,7 @@
   console.log("ePub =", typeof ePub); // debe ser "function"
 
   const book = ePub();          // ⬅️ cambio CLAVE
-  book.open("libro.epub");      // ⬅️ cambio CLAVE
+  book.open("/libro/libro.epub");      // ⬅️ cambio CLAVE
 
   const rendition = book.renderTo("viewer", {
     width: "100%",
