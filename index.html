@@ -63,7 +63,12 @@
 
   <script>
     // === Cargar el libro ===
-    const book = ePub("libro.epub");
+   const book = ePub({
+  url: "libro.epub",
+  openAs: "epub"
+});
+
+book.loaded.metadata.then(m => console.log(m));
 
     const rendition = book.renderTo("viewer", {
       width: "100%",
