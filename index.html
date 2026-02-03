@@ -4,7 +4,10 @@
   <meta charset="UTF-8">
   <title>Mi libro</title>
 
-  <!-- epub.js desde CDN -->
+  <!-- 🔑 JSZip (OBLIGATORIO para EPUB) -->
+  <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+
+  <!-- epub.js -->
   <script src="https://unpkg.com/epubjs/dist/epub.min.js"></script>
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -50,19 +53,17 @@
 </div>
 
 <script>
-  console.log("ePub =", typeof ePub); // debe ser "function"
+  console.log("ePub =", typeof ePub);
+  console.log("JSZip =", typeof JSZip);
 
   const book = ePub();
 
-  // 🔑 CARGA ROBUSTA DEL EPUB
   fetch("libro.epub")
     .then(res => {
       if (!res.ok) throw new Error("No se pudo cargar el EPUB");
       return res.arrayBuffer();
     })
-    .then(buffer => {
-      return book.open(buffer);
-    })
+    .then(buffer => book.open(buffer))
     .then(() => {
       const rendition = book.renderTo("viewer", {
         width: "100%",
@@ -78,9 +79,7 @@
       book.loaded.metadata.then(m => console.log("metadata:", m));
       book.loaded.navigation.then(n => console.log("toc:", n));
     })
-    .catch(err => {
-      console.error("Error abriendo el EPUB:", err);
-    });
+    .catch(err => console.error("Error EPUB:", err));
 </script>
 
 </body>
