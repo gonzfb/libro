@@ -4,8 +4,8 @@
   <meta charset="UTF-8">
   <title>Mi libro</title>
 
-  <!-- epub.js (archivo local descargado desde unpkg) -->
-  <script src="/libro/epub.min.js"></script>
+  <!-- epub.js desde CDN (SOLUCIÓN CLAVE) -->
+  <script src="https://unpkg.com/epubjs/dist/epub.min.js"></script>
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -44,48 +44,54 @@
       font-size: 14px;
       cursor: pointer;
     }
-
-    #controls button:active {
-      background: rgba(255,255,255,0.2);
-    }
   </style>
 </head>
 <body>
 
-  <div id="viewer"></div>
+<div id="viewer"></div>
 
-  <div id="controls">
-    <button id="prev">◀</button>
-    <button id="next">▶</button>
-    <button id="smaller">A−</button>
-    <button id="bigger">A+</button>
-  </div>
+<div id="controls">
+  <button onclick="rendition.prev()">◀</button>
+  <button onclick="rendition.next()">▶</button>
+  <button onclick="smaller()">A−</button>
+  <button onclick="bigger()">A+</button>
+</div>
 
-  <script>
-    // === Cargar el libro ===
-   const book = ePub({
-  url: "/libro/libro.epub",
-  openAs: "epub"
-});
+<script>
+  console.log("ePub =", typeof ePub); // DEBE decir "function"
 
-book.loaded.metadata.then(m => console.log(m));
+  const book = ePub("libro.epub");
 
-    const rendition = book.renderTo("viewer", {
-      width: "100%",
-      height: "100%",
-      spread: "none"
-    });
+  const rendition = book.renderTo("viewer", {
+    width: "100%",
+    height: "100%",
+    spread: "none"
+  });
 
-    // === Tamaño de letra ===
-    let fontSize = parseInt(localStorage.getItem("fontSize") || "100", 10);
+  let fontSize = parseInt(localStorage.getItem("fontSize") || "100", 10);
+  rendition.themes.fontSize(fontSize + "%");
+
+  book.ready.then(() => {
+    const saved = localStorage.getItem("epub-location");
+    rendition.display(saved || undefined);
+  });
+
+  rendition.on("relocated", loc => {
+    localStorage.setItem("epub-location", loc.start.cfi);
+  });
+
+  function bigger() {
+    fontSize += 10;
     rendition.themes.fontSize(fontSize + "%");
+    localStorage.setItem("fontSize", fontSize);
+  }
 
-    // === Mostrar última posición guardada ===
-    book.ready.then(() => {
-      const savedLocation = localStorage.getItem("epub-location");
-      if (savedLocation) {
-        rendition.display(savedLocation);
-      } else {
-        rendition.display();
-      }
-    });
+  function smaller() {
+    fontSize = Math.max(70, fontSize - 10);
+    rendition.themes.fontSize(fontSize + "%");
+    localStorage.setItem("fontSize", fontSize);
+  }
+</script>
+
+</body>
+</html>
