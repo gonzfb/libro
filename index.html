@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <title>Mi libro</title>
 
-  <!-- epub.js desde CDN (SOLUCIÓN CLAVE) -->
+  <!-- epub.js desde CDN -->
   <script src="https://unpkg.com/epubjs/dist/epub.min.js"></script>
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,36 +12,29 @@
   <style>
     body {
       margin: 0;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-      background: #f5f5f5;
+      font-family: system-ui, sans-serif;
     }
-
     #viewer {
       width: 100%;
       height: 100vh;
-      background: white;
     }
-
     #controls {
       position: fixed;
       bottom: 12px;
       left: 50%;
       transform: translateX(-50%);
-      background: rgba(0, 0, 0, 0.75);
+      background: rgba(0,0,0,.75);
       padding: 8px 12px;
       border-radius: 10px;
       display: flex;
       gap: 8px;
-      z-index: 1000;
     }
-
     #controls button {
+      color: white;
       background: none;
       border: 1px solid white;
-      color: white;
       padding: 6px 10px;
       border-radius: 6px;
-      font-size: 14px;
       cursor: pointer;
     }
   </style>
@@ -51,16 +44,15 @@
 <div id="viewer"></div>
 
 <div id="controls">
-  <button onclick="rendition.prev()">◀</button>
-  <button onclick="rendition.next()">▶</button>
-  <button onclick="smaller()">A−</button>
-  <button onclick="bigger()">A+</button>
+  <button id="prev">◀</button>
+  <button id="next">▶</button>
 </div>
 
 <script>
-  console.log("ePub =", typeof ePub); // DEBE decir "function"
+  console.log("ePub =", typeof ePub); // debe ser "function"
 
-  const book = ePub("/libro/libro.epub");
+  const book = ePub();          // ⬅️ cambio CLAVE
+  book.open("libro.epub");      // ⬅️ cambio CLAVE
 
   const rendition = book.renderTo("viewer", {
     width: "100%",
@@ -68,29 +60,14 @@
     spread: "none"
   });
 
-  let fontSize = parseInt(localStorage.getItem("fontSize") || "100", 10);
-  rendition.themes.fontSize(fontSize + "%");
+  rendition.display();
 
-  book.ready.then(() => {
-    const saved = localStorage.getItem("epub-location");
-    rendition.display(saved || undefined);
-  });
+  document.getElementById("prev").onclick = () => rendition.prev();
+  document.getElementById("next").onclick = () => rendition.next();
 
-  rendition.on("relocated", loc => {
-    localStorage.setItem("epub-location", loc.start.cfi);
-  });
-
-  function bigger() {
-    fontSize += 10;
-    rendition.themes.fontSize(fontSize + "%");
-    localStorage.setItem("fontSize", fontSize);
-  }
-
-  function smaller() {
-    fontSize = Math.max(70, fontSize - 10);
-    rendition.themes.fontSize(fontSize + "%");
-    localStorage.setItem("fontSize", fontSize);
-  }
+  // Depuración útil
+  book.loaded.metadata.then(m => console.log("metadata:", m));
+  book.loaded.navigation.then(n => console.log("toc:", n));
 </script>
 
 </body>
