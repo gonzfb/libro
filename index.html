@@ -60,7 +60,7 @@
 <script>
   console.log("ePub =", typeof ePub); // DEBE decir "function"
 
-  const book = ePub("libro.epub");
+  const book = ePub("/libro/libro.epub");
 
   const rendition = book.renderTo("viewer", {
     width: "100%",
